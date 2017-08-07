@@ -1,3 +1,12 @@
+var express = require("express")
+var bodyParser = require("body-parser")
+var shortid = require('shortid')
+var app = express();
+var path = require('path')
+var jsonPath = path.join(__dirname, 'data.json');
+var fs = require('fs')
+
+app.use(bodyParser.json())
 app.route("/chirps")
     .get(function(req, res){
         fs.readFile(jsonPath, function(err, file) {
@@ -114,3 +123,7 @@ app.route('/chirps/one/:id')
             }
         });
     });
+
+app.listen(3000, function () {
+    console.log('listening on port 3000')
+});
