@@ -12,7 +12,7 @@ app.route("/chirps")
         fs.readFile(jsonPath, function(err, file) {
             if (err) {
                 res.writeHead(500);
-                res.end('Could not read file');
+                res.end('You messed up bro');
             }
 
             res.write(file);
@@ -125,5 +125,5 @@ app.route('/chirps/one/:id')
     });
 
 app.listen(3000, function () {
-    console.log('listening on port 3000')
+    console.log('Listening on port 3000')
 });
