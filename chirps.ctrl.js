@@ -1,13 +1,16 @@
-var express = require("express")
-var bodyParser = require("body-parser")
-var shortid = require('shortid')
+var express = require('express');
+var bodyParser = require('body-parser')
+var mmnt = require('./moment')
 var app = express();
-var path = require('path')
+var handleID = require('./shortid')
+var path = require('path');
 var jsonPath = path.join(__dirname, 'data.json');
 var fs = require('fs')
 
-app.use(bodyParser.json())
-app.route("/chirps")
+var router = express.Router()
+console.log(handleID);
+
+router.route('/')
     .get(function(req, res){
         fs.readFile(jsonPath, function(err, file) {
             if (err) {
@@ -19,14 +22,13 @@ app.route("/chirps")
             res.end();
         });
 })
-    .post(function(req, res){
+    .post(mmnt.genTimeStamp, handleID.generateID, function(req, res){
         fs.readFile(jsonPath, 'utf-8', function(err, file) {
             if (err) {
                 res.status(500);
             } else {
                 var chunks = JSON.parse(file),
                     chunk = req.body;
-                chunk.id = shortid.generate();
                 chunks.push(chunk);
                 fs.writeFile(jsonPath, JSON.stringify(chunks), function(err, success) {
                     if (err) {
@@ -39,7 +41,7 @@ app.route("/chirps")
             }
         });
     });
-app.route('/chirps/one/:id')
+    router.route('/one/:id')
     .get(function(req, res) {
         fs.readFile(jsonPath, 'utf-8', function(err, fileContents) {
             if (err) {
@@ -124,6 +126,4 @@ app.route('/chirps/one/:id')
         });
     });
 
-app.listen(3000, function () {
-    console.log('Listening on port 3000')
-});
+module.exports = router;
