@@ -8,10 +8,11 @@ var jsonPath = path.join(__dirname, 'data.json');
 var fs = require('fs')
 
 var router = express.Router()
-console.log(handleID);
+
 
 router.route('/')
     .get(function(req, res){
+        console.log("getting chirps")
         fs.readFile(jsonPath, function(err, file) {
             if (err) {
                 res.writeHead(500);
@@ -82,7 +83,7 @@ router.route('/')
                     if (a.id === id) {
                         response = a;
                         response.user = req.body.user;
-                        response.chirp= req.body.chirp;
+                        response.message= req.body.message;
                     }
                 });
             fs.writeFile(jsonPath, JSON.stringify(arr), function(err, success) {
@@ -99,11 +100,13 @@ router.route('/')
   
     .delete(function(req, res) {
         fs.readFile(jsonPath, 'utf-8', function(err, fileContents) {
+            console.log("inside delete");
             if (err) {
                 res.sendStatus(500);
             } else {
                 var chunks = JSON.parse(fileContents);
                 var id = req.params.id;
+                console.log(id)
                 var deleteIndex = -1;
                 chunks.forEach(function(chunk, i) {
                     if (chunk.id === id) {
@@ -125,5 +128,33 @@ router.route('/')
             }
         });
     });
+    router.route('/user/:id')
+    .get(function(req, res) {
+        fs.readFile(jsonPath, 'utf-8', function(err, file) {
+            if (err) {
+                res.statusStatus(500);
+            }
+            if (!req.params.id){
+                return res.sendStatus(400)
+            }
+
+                var id = req.params.id;
+
+                var parsed = JSON.parse(file);
+            
+                var userChirps = parsed.filter(function(chirp){
+                    if(chirp.userid == id){
+                        return true;
+
+                    }
+                }) 
+
+                if ( userChirps.length == 0 ) {
+                    res.sendStatus(404);
+                } else {
+                    res.send(userChirps);
+                }
+        })
+        });
 
 module.exports = router;

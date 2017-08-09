@@ -1,4 +1,5 @@
-var express = require('express')
+var express = require('express');
+var user = require('./')
 
 var router = express.Router()
 
